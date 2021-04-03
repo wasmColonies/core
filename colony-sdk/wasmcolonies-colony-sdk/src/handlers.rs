@@ -4,13 +4,15 @@ use wasmcolonies_protocol as protocol;
 use wasmcolonies_protocol::{deserialize, serialize};
 
 lazy_static! {
+    #[doc(hidden)]
     static ref PLAYER_TICK: RwLock<Option<fn(protocol::PlayerTick) -> HandlerResult<protocol::PlayerTickResponse>>> =
         RwLock::new(None);
 }
 
-/// Used to register core message handlers
+#[doc(hidden)]
 pub struct Handlers {}
 
+#[doc(hidden)]
 impl Handlers {
     pub fn register_player_tick(
         f: fn(protocol::PlayerTick) -> HandlerResult<protocol::PlayerTickResponse>,
