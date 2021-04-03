@@ -50,6 +50,8 @@ pub fn tick(_: TokenStream, item: TokenStream) -> TokenStream {
 
         #[doc(hidden)]
         fn colony_tick(tick: protocol::PlayerTick) -> wapc_guest::HandlerResult<protocol::PlayerTickResponse> {
+            sdk::set_state(tick.game_state);
+                        
             #body
 
             // TODO
