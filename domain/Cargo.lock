@@ -228,7 +228,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f7fe0bb3479651439c9112f72b6c505038574c9fbb575ed1bf3b797fa39dd564"
 
 [[package]]
-name = "wacolonies-domain"
+name = "wasi"
+version = "0.10.0+wasi-snapshot-preview1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a143597ca7c7793eff794def352d41792a93c481eb1042423ff7ff72ba2c31f"
+
+[[package]]
+name = "wasmcolonies-domain"
 version = "0.1.0"
 dependencies = [
  "eventsourcing",
@@ -236,11 +242,11 @@ dependencies = [
  "serde",
  "serde_derive",
  "serde_json",
- "wacolonies-protocol",
+ "wasmcolonies-protocol",
 ]
 
 [[package]]
-name = "wacolonies-protocol"
+name = "wasmcolonies-protocol"
 version = "0.1.0"
 dependencies = [
  "rmp-serde",
@@ -249,12 +255,6 @@ dependencies = [
  "serde_derive",
  "serde_json",
 ]
-
-[[package]]
-name = "wasi"
-version = "0.10.0+wasi-snapshot-preview1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a143597ca7c7793eff794def352d41792a93c481eb1042423ff7ff72ba2c31f"
 
 [[package]]
 name = "winapi"

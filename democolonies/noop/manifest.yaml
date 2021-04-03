@@ -1,0 +1,7 @@
+---
+labels:
+    sample: "noop"
+actors:
+    - ./target/wasm32-unknown-unknown/debug/colony_noop_s.wasm
+capabilities: []
+links: []
