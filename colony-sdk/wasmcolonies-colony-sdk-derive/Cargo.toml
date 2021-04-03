@@ -1,0 +1,21 @@
+[package]
+name = "wasmcolonies-colony-sdk-derive"
+version = "0.1.0"
+authors = ["wasmcloud Team"]
+description = "Procedural macro derive crate for wasmcolonies-colony-sdk"
+edition = "2018"
+license = "Apache-2.0"
+documentation = "https://docs.rs/wasmcolonies-colony-sdk"
+readme = "README.md"
+keywords = ["webassembly", "wasm", "wasmcloud", "actor"]
+categories = ["wasm", "api-bindings"]
+
+[lib]
+proc-macro = true
+
+[dependencies]
+wasmcolonies-protocol = { path = "../../protocol" }
+wasmcloud-actor-core = { version = "0.2.2", features = ["guest"] }
+quote = "1"
+syn = { version = "1", features = ["full"] }
+proc-macro2 = "1"

@@ -1,0 +1,22 @@
+[package]
+name = "wasmcolonies-colony-sdk"
+description = "wasmColonies Colony SDK"
+version = "0.1.0"
+authors = ["wasmcloud Team"]
+edition = "2018"
+license = "Apache-2.0"
+documentation = "https://docs.rs/wasmcolonies-colony-sdk"
+readme = "README.md"
+keywords = ["webassembly", "wasm", "wasmcloud", "actor"]
+categories = ["wasm", "api-bindings"]
+
+[dependencies]
+wasmcolonies-protocol = { path = "../../protocol" }
+wasmcolonies-colony-sdk-derive = { path = "../wasmcolonies-colony-sdk-derive"}
+wapc-guest = "0.4.0"
+serde = { version = "1.0.123" , features = ["derive"] }
+serde_json = "1.0.62"
+serde_bytes = "0.11.5"
+rmp-serde = "0.15.4"
+log = { version="0.4.14", features =["std","serde"]}
+lazy_static = "1.4.0"

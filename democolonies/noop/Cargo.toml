@@ -1,0 +1,19 @@
+[package]
+name = "colony-noop"
+version = "0.1.0"
+authors = ["Kevin Hoffman <alothien@gmail.com>"]
+edition = "2018"
+
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasmcolonies-colony-sdk = { path = "../../colony-sdk/wasmcolonies-colony-sdk"}
+wasmcloud-actor-core = "0.2.2"
+wasmcolonies-protocol = { path = "../../protocol"}
+wapc-guest = "0.4.0"
+
+[profile.release]
+opt-level = "s"
+lto = true
