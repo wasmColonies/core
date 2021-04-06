@@ -8,6 +8,23 @@ mod command;
 pub use actor::*;
 pub use command::*;
 
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
+pub enum UnitType {
+    None,
+    Mine(OreType),
+}
+
+impl Default for UnitType {
+    fn default() -> UnitType {
+        UnitType::None
+    }
+}
+
+#[derive(Debug, PartialEq, Deserialize, Serialize, Clone)]
+pub enum OreType {
+    Wasmium,
+}
+
 pub fn serialize<T>(
     item: T,
 ) -> ::std::result::Result<Vec<u8>, Box<dyn std::error::Error + Send + Sync>>

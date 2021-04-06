@@ -9,15 +9,95 @@
 // able to push them on the wire. The "real" Invocation and InvocationResponse types are in the wasmcloud-host
 // crate in the dispatch module because we need to implement other traits on those types.
 
+use crate::Result;
 use data_encoding::HEXUPPER;
 use ring::digest::{Context, Digest, SHA256};
 use serde::{Deserialize, Serialize};
-use std::io::Read;
+use std::{io::Read, time::Duration};
+use tracing::error;
 use uuid::Uuid;
 use wascap::jwt::Claims;
 use wascap::prelude::KeyPair;
+use wasmcolonies_protocol::{
+    deserialize, serialize, ColonyCommand, GameStateColonyView, PlayerTick, PlayerTickResponse,
+    OP_PLAYER_TICK,
+};
 
 const URL_SCHEME: &str = "wasmbus";
+const RPC_TIMEOUT_MILLIS: u64 = 1_000;
+
+pub struct ColonyInvoker {
+    nc: nats::Connection,
+    hk: KeyPair,
+}
+
+impl ColonyInvoker {
+    pub fn new(nc: nats::Connection) -> ColonyInvoker {
+        ColonyInvoker {
+            nc,
+            hk: KeyPair::new_server(),
+        }
+    }
+
+    pub fn fetch_commands(
+        &self,
+        player_id: &str,
+        actor_key: &str,
+        gs: GameStateColonyView,
+    ) -> Result<Vec<ColonyCommand>> {
+        let pt = PlayerTick {
+            tick: 0,
+            player_id: player_id.to_string(),
+            game_state: Some(gs),
+        };
+
+        let inv = Invocation::new(
+            &self.hk,
+            Entity::Actor("system".to_string()),
+            Entity::Actor(actor_key.to_string()),
+            OP_PLAYER_TICK,
+            serialize(pt).unwrap(),
+        );
+        let subject = &rpc_subject(None, &actor_key);
+        let res = self.nc.request_timeout(
+            subject,
+            &serialize(inv).unwrap(),
+            Duration::from_millis(RPC_TIMEOUT_MILLIS),
+        );
+        let tr: std::result::Result<PlayerTickResponse, std::io::Error> = res
+            .and_then(|m| {
+                deserialize::<InvocationResponse>(&m.data)
+                    .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, format!("{}", e)))
+            })
+            .and_then(|ir| {
+                if let Some(e) = ir.error {
+                    Err(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        format!("{}", e),
+                    ))
+                } else {
+                    deserialize::<PlayerTickResponse>(&ir.msg).map_err(|e| {
+                        std::io::Error::new(std::io::ErrorKind::Other, format!("{}", e))
+                    })
+                }
+            });
+        Ok(match tr {
+            Ok(tr) => tr.commands,
+            Err(e) => {
+                error!("{}", e);
+                vec![ColonyCommand::Pass(0)]
+            }
+        })
+    }
+}
+
+fn rpc_subject(prefix: Option<String>, actor: &str) -> String {
+    format!(
+        "wasmbus.rpc.{}.{}",
+        prefix.as_ref().unwrap_or(&"default".to_string()),
+        actor
+    )
+}
 
 /// An immutable representation of an invocation within wasmcloud
 #[derive(Debug, Clone, Serialize, Deserialize)]

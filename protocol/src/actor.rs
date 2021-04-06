@@ -1,6 +1,7 @@
 use crate::command::ColonyCommand;
 use serde::{Deserialize, Serialize};
 
+pub const OP_PLAYER_TICK: &str = "PlayerTick";
 #[derive(Debug, PartialEq, Deserialize, Serialize, Default, Clone)]
 pub struct PlayerTick {
     pub tick: u64,
